@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"errors"
 	"io/ioutil"
 	"net/http"
 
@@ -14,6 +15,19 @@ import (
 	"github.com/stripe/stripe-go/v74/client"
 	"github.com/stripe/stripe-go/v74/webhook"
 )
+
+func convertPaymentStatus(status stripe.CheckoutSessionPaymentStatus) (string, error) {
+	switch status {
+	case "paid":
+		return "PAID", nil
+	case "unpaid":
+		return "UNPAID", nil
+	case "no_payment_required":
+		return "CANCELED", nil
+	default:
+		return "", errors.New("Invalid payment status!")
+	}
+}
 
 func updateOrder(sessionID string) int {
 	sc := client.New(config.Data.StripeKey, nil)
@@ -43,9 +57,16 @@ func updateOrder(sessionID string) int {
 	}
 
 	// Create order, clear cache
+	cstatus, err := convertPaymentStatus(sessions.PaymentStatus)
+
+	if err != nil {
+		log.Error.Println("[checkout] Could not get payment status!")
+		return http.StatusInternalServerError
+	}
+
 	if err := database.CreateOrder(
 		id.String(), cs.IDS, sessions.PaymentIntent.ID,
-		cs.User, "PAID", cs.Quantity,
+		cs.User, cstatus, cs.Quantity,
 		int(sessions.AmountTotal), cs.Email, sessions.CustomerDetails.Address.Country,
 		sessions.CustomerDetails.Address.PostalCode, "PENDING",
 	); err != nil {
@@ -58,6 +79,7 @@ func updateOrder(sessionID string) int {
 		return http.StatusInternalServerError
 	}
 
+	log.Info.Println("[checkout] Resolved", sessions.PaymentIntent.ID)
 	return http.StatusOK
 }
 
