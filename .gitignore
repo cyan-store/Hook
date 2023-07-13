@@ -1,0 +1,7 @@
+# Builds
+/bin/*
+!/bin/.gitkeep
+
+# Private
+config.yaml
+todo
