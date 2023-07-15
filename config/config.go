@@ -35,6 +35,8 @@ func Load() Config {
 		os.Exit(1)
 	}
 
+	cfg.Port = getFlags()
 	Data = cfg
+
 	return cfg
 }

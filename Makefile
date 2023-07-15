@@ -1,5 +1,5 @@
 APP = "hook" # App name
-PORT = 3015
+PORT = 3020
 STRIPE = stripe # https://stripe.com/docs/stripe-cli
 UPX = upx # https://upx.github.io/ (optional)
 
@@ -21,7 +21,7 @@ build:
 .PHONY: dev
 dev:
 	@printf "Running $(APP)-\n"
-	@go run *.go
+	@go run *.go --port $(PORT)
 
 .PHONY: listen
 listen:
