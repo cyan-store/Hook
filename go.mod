@@ -1,6 +1,6 @@
 module github.com/cyan-store/hook
 
-go 1.19
+go 1.20
 
 require github.com/stripe/stripe-go/v74 v74.25.0
 
