@@ -12,11 +12,25 @@ type Config struct {
 	DSN        string `yaml:"DSN"`
 	StripeKey  string `yaml:"STRIPE_KEY"`
 	StripeHook string `yaml:"STRIPE_HOOK"`
-	Cache      struct {
+
+	Cache struct {
 		Address  string `yaml:"ADDRESS"`
 		Password string `yaml:"Password"`
 		DB       int    `yaml:"DB"`
 	} `yaml:"CACHE"`
+
+	ReportMail struct {
+		Address string `yaml:"ADDRESS"`
+		Success bool `yaml:"SUCCESS"`
+		Error   bool `yaml:"ERROR"`
+	} `yaml:"REPORT"`
+
+	Mail struct {
+		User     string `yaml:"USER"`
+		Password string `yaml:"PASSWORD"`
+		Host     string `yaml:"HOST"`
+		Port     int    `yaml:"PORT"`
+	} `yaml:"MAIL"`
 }
 
 var Data Config

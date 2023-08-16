@@ -3,13 +3,14 @@ package handlers
 import (
 	"encoding/json"
 	"errors"
-	"io/ioutil"
+	"io"
 	"net/http"
 
 	"github.com/cyan-store/hook/cache"
 	"github.com/cyan-store/hook/config"
 	"github.com/cyan-store/hook/database"
 	"github.com/cyan-store/hook/log"
+	"github.com/cyan-store/hook/mail"
 	"github.com/google/uuid"
 	"github.com/stripe/stripe-go/v74"
 	"github.com/stripe/stripe-go/v74/client"
@@ -25,7 +26,7 @@ func convertPaymentStatus(status stripe.CheckoutSessionPaymentStatus) (string, e
 	case "no_payment_required":
 		return "CANCELED", nil
 	default:
-		return "", errors.New("Invalid payment status!")
+		return "", errors.New("invalid payment status")
 	}
 }
 
@@ -36,6 +37,8 @@ func updateOrder(sessionID string) int {
 	// Fetch stripe session
 	if err != nil {
 		log.Error.Println("[checkout] Could not get stripe session:", err)
+		mail.ReportError(sessionID, "Could not get stripe session", err)
+
 		return http.StatusInternalServerError
 	}
 
@@ -53,6 +56,8 @@ func updateOrder(sessionID string) int {
 
 	if err != nil {
 		log.Error.Println("[checkout] Could not get redis session:", err)
+		mail.ReportError(sessionID, "Could not get redis session", err)
+
 		return http.StatusInternalServerError
 	}
 
@@ -61,6 +66,8 @@ func updateOrder(sessionID string) int {
 
 	if err != nil {
 		log.Error.Println("[checkout] Could not get payment status!")
+		mail.ReportError(sessionID, "Could not get payment status", err)
+
 		return http.StatusInternalServerError
 	}
 
@@ -71,20 +78,26 @@ func updateOrder(sessionID string) int {
 		sessions.CustomerDetails.Address.PostalCode, "PENDING",
 	); err != nil {
 		log.Error.Println("[checkout] Could not insert order:", err)
+		mail.ReportError(sessionID, "Could not insert order", err)
+
 		return http.StatusInternalServerError
 	}
 
 	if err := cache.DeleteSession(sessionID); err != nil {
 		log.Error.Println("[checkout] Could not clear cache:", err, sessionID)
+		mail.ReportError(sessionID, "Could not clear cache", err)
+
 		return http.StatusInternalServerError
 	}
 
 	log.Info.Println("[checkout] Resolved", sessions.PaymentIntent.ID)
+	mail.ReportSuccess(sessions.PaymentIntent.ID)
+
 	return http.StatusOK
 }
 
 func Checkout(w http.ResponseWriter, r *http.Request) {
-	body, err := ioutil.ReadAll(r.Body)
+	body, err := io.ReadAll(r.Body)
 
 	// Read body
 	if err != nil {

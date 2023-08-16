@@ -1,0 +1,22 @@
+# Database
+DSN: user:password@tcp(host:port)/shop
+CACHE:
+  ADDRESS: "0.0.0.0:6379"
+  PASSWORD: ""
+  DB: 0
+
+# Stripe
+STRIPE_KEY: "sk_example"
+STRIPE_HOOK: "whsec_example"
+
+# Email
+REPORT:
+  ADDRESS: "logs@example.com"
+  SUCCESS: false
+  ERROR: true
+
+MAIL:
+  USER: "reporter@example.com"
+  PASSWORD: "SecretPassword"
+  HOST: "smtp.email.com"
+  PORT: 587

@@ -3,11 +3,9 @@ package cache
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 
 	"github.com/cyan-store/hook/log"
-	"github.com/redis/go-redis/v9"
 )
 
 type Session struct {
@@ -23,10 +21,6 @@ func GetSession(id string) (Session, error) {
 	sc := Session{}
 
 	if err != nil {
-		if errors.Is(err, redis.Nil) {
-			return sc, nil
-		}
-
 		log.Error.Println("[GetSession] Could not get session:", err)
 		return sc, err
 	}
