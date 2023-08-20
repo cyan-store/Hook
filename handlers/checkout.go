@@ -74,8 +74,10 @@ func updateOrder(sessionID string) int {
 	if err := database.CreateOrder(
 		id.String(), cs.IDS, sessions.PaymentIntent.ID,
 		cs.User, cstatus, cs.Quantity,
-		int(sessions.AmountTotal), cs.Email, sessions.CustomerDetails.Address.Country,
-		sessions.CustomerDetails.Address.PostalCode, "PENDING",
+		int(sessions.AmountTotal), cs.Email, "PENDING",
+		sessions.ShippingDetails.Name, sessions.ShippingDetails.Address.City, sessions.ShippingDetails.Address.Country,
+		sessions.ShippingDetails.Address.Line1, sessions.ShippingDetails.Address.Line2, sessions.ShippingDetails.Address.PostalCode,
+		sessions.ShippingDetails.Address.State,
 	); err != nil {
 		log.Error.Println("[checkout] Could not insert order:", err)
 		mail.ReportError(sessionID, "Could not insert order", err)
