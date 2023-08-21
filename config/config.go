@@ -21,8 +21,8 @@ type Config struct {
 
 	ReportMail struct {
 		Address string `yaml:"ADDRESS"`
-		Success bool `yaml:"SUCCESS"`
-		Error   bool `yaml:"ERROR"`
+		Success bool   `yaml:"SUCCESS"`
+		Error   bool   `yaml:"ERROR"`
 	} `yaml:"REPORT"`
 
 	Mail struct {

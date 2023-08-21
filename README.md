@@ -1,6 +1,6 @@
 # Hook
 
-![go-mod](https://img.shields.io/github/go-mod/go-version/cyan903/c-share) ![go-report](https://goreportcard.com/badge/github.com/cyan903/c-share) ![last-commit](https://img.shields.io/github/last-commit/cyan-store/Shop)
+![go-mod](https://img.shields.io/github/go-mod/go-version/cyan-store/hook) ![go-report](https://goreportcard.com/badge/github.com/cyan-store/hook) ![last-commit](https://img.shields.io/github/last-commit/cyan-store/Shop)
 
 The stripe webhook for cyan-store. This is required for orders to process and payments to complete. Requires an SQL server along with redis.
 
